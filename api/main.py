@@ -5,6 +5,7 @@ from modules.image_captioner import ImageCaptioner
 from modules.description_enhancer import DescriptionEnhancer
 from modules.text_to_speech import TextToSpeech
 from modules.storytell import StoryTell
+from modules.pdf_extractor import PDFExtractor
 import os
 import uvicorn
 from dotenv import load_dotenv
@@ -43,17 +44,34 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
 
     # Save the uploaded file
     image_path = f"./temp/{file.filename}"
+    pdf_path = f"./temp/{file.filename}"
+    output_folder = "./temp"
     os.makedirs(os.path.dirname(image_path), exist_ok=True)
 
     with open(image_path, "wb") as image_file:
         image_file.write(await file.read())
 
-    # Step 1: Extract text from image (OCR)
+    # # Step 1: Extract text from image (OCR)
+    # try:
+    #     extracted_text = ocr_processor.extract_text(image_path)
+    # except Exception as e:
+    #     print(f"Error during OCR: {e}")
+    #     extracted_text = ""
+
+    # Step 1: Preprocess PDF
     try:
-        extracted_text = ocr_processor.extract_text(image_path)
+        pdf_extractor = PDFExtractor(pdf_path, output_folder)
+        extracted_pdf = pdf_extractor.preprocess_story()
+        uuid = extracted_pdf["unique_id"]
+        text_files = extracted_pdf["text_files"]
+        images = extracted_pdf["image_files"]
     except Exception as e:
-        print(f"Error during OCR: {e}")
+        print(f"Error during PDF extraction: {e}")
         extracted_text = ""
+
+    # default to first image
+    image_path = images[0]
+    extracted_text = text_files[0]
 
     # Step 2: Generate image caption
     try:
@@ -62,10 +80,10 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
         print(f"Error during image captioning: {e}")
         image_caption = "a scene from a storybook"
 
-    # Combine OCR text and caption for description enhancement
+    # # Combine OCR text and caption for description enhancement
     combined_text = f"{image_caption}. {extracted_text}"
 
-    # Step 3: Enhance description
+    # # Step 3: Enhance description
     try:
         enhanced_description = description_enhancer.enhance_description(
             combined_text)
@@ -73,7 +91,7 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
         print(f"Error during description enhancement: {e}")
         enhanced_description = "An engaging description could not be generated due to a processing error."
 
-    # Step 4: OpenAI Storytell
+    # # Step 4: OpenAI Storytell
     story_for_audio = None
     try:
         story_for_audio = StoryTell.generate_storytell(text_from_visuals=enhanced_description, extracted_text=extracted_text)
@@ -81,7 +99,7 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
         print(f"Error during story enhancement: {e}")
         story_for_audio = "An engaging story could not be generated due to a processing error."
 
-    # Step 5: Convert description to audio
+    # # Step 5: Convert description to audio
     try:
         audio_path = "./temp/output.mp3"
         text_to_speech.generate_audio(story_for_audio, audio_path)
