@@ -100,8 +100,65 @@ To use Llama 2 for description enhancement, install **Ollama**:
 
    This starts the Ollama API at `http://localhost:11434`, which the app will use for generating descriptions.
 
+### 7. Environment Setup
+
+This project requires some environment variables (like API keys or other sensitive information) to be configured locally. To simplify setup, we’ve included a `.env_template` file that you can use as a reference for creating your own `.env` file.
+
+#### **Steps to Set Up Your Local Environment Variables**
+
+1. **Copy the Template File**:
+   - In the project’s root directory, copy the `.env_template` file to create your own `.env` file:
+
+     ```bash
+     cp .env_template .env
+     ```
+
+2. **Edit the `.env` File**:
+   - Open the newly created `.env` file and update each environment variable with your local or project-specific values.
+
+   - For example, if the `.env_template` contains:
+     ```plaintext
+     MY_API_KEY=your_api_key_here
+     ANOTHER_API_KEY=another_api_key_here
+     TTS_SERVICE=gtts
+     ```
+   - Replace `your_api_key_here` and other placeholders with your actual values:
+     ```plaintext
+     MY_API_KEY=abcdef12345
+     ANOTHER_API_KEY=zyx98765
+     TTS_SERVICE=gtts
+     ```
+
+3. **Save the `.env` File**:
+   - After updating the variables, save the `.env` file. These values will now load automatically whenever the app runs.
+
+#### **Using Environment Variables in the Code**
+
+- Environment variables set in `.env` will automatically be accessible in the application, ensuring that sensitive information like API keys is never hardcoded into the source code.
+  
+- For team members, please don’t commit your `.env` file to version control to keep sensitive information secure. The `.env_template` file is included in version control for reference only.
+
+#### **Example Variables in `.env_template`**
+
+Here’s an example of what the `.env_template` file might contain:
+
+```plaintext
+# API Keys
+MY_API_KEY=your_api_key_here
+ANOTHER_API_KEY=another_api_key_here
+
+# TTS Service (default: gtts)
+TTS_SERVICE=gtts
+```
+
+Each team member should replace the placeholders with their own credentials and preferred settings.
+
 ---
 
+### **Note on Security**
+
+The `.env` file is included in `.gitignore` to ensure it is not accidentally committed to version control. Always double-check before committing that sensitive information is not being pushed to the repository.
+---
 ## Running the App
 
 The app includes two main components: the FastAPI backend and the Streamlit frontend. Make sure Ollama’s API server is running if you plan to use Llama 2.
