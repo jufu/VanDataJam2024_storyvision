@@ -4,6 +4,7 @@ from modules.ocr_processor import OCRProcessor
 from modules.image_captioner import ImageCaptioner
 from modules.description_enhancer import DescriptionEnhancer
 from modules.text_to_speech import TextToSpeech
+from modules.storytell import StoryTell
 import os
 
 app = FastAPI()
@@ -67,10 +68,18 @@ async def process_image(file: UploadFile = File(...)):
         print(f"Error during description enhancement: {e}")
         enhanced_description = "An engaging description could not be generated due to a processing error."
 
-    # Step 4: Convert description to audio
+    # Step 4: OpenAI Storytell
+    story_for_audio = None
+    try:
+        story_for_audio = StoryTell.storytell(enhanced_description)
+    except Exception as e:
+        print(f"Error during story enhancement: {e}")
+        story_for_audio = "An engaging story could not be generated due to a processing error."
+
+    # Step 5: Convert description to audio
     try:
         audio_path = "./temp/output.mp3"
-        text_to_speech.generate_audio(enhanced_description, audio_path)
+        text_to_speech.generate_audio(story_for_audio, audio_path)
     except Exception as e:
         print(f"Error during text-to-speech generation: {e}")
         raise HTTPException(
