@@ -3,10 +3,12 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 
 # llama model name meta-llama/Llama-2-7b-hf
+# gpt2 model name gpt2
+# gpt2 large model name gpt2-large
 
 
 class ModelLoader:
-    def __init__(self, model_name="gpt2", device=None):
+    def __init__(self, model_name="gpt2-large", device=None):
         """
         Initializes the ModelLoader class, which handles loading and inference 
         for different language models. It defaults to the Llama 2 7B model.
