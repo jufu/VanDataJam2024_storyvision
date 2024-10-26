@@ -14,18 +14,18 @@ class StoryTell:
 
     def generate_storytell(self, text):
         """
-        Generates an audio file from the provided text.
+        Generates a LLM optimized story from the provided text.
 
         Args:
-            text (str): The text to convert to speech.
+            text (str): The text to convert
             output_file (str): The name of the output audio file.
 
         Returns:
-            str: Path to the generated audio file.
+            str: optimized story from chatgpt
         """
         try:
             # Set your OpenAI API key
-            api_key = "sk-YqhOmfvWOi_8YrEX0UcDa3IPlVzF1IAqnlmQ-1VfehT3BlbkFJlm_TVhZq1G4JG13QCItAWg96Bt1KC1ynG3NVugio4A"
+            api_key = os.environ.get("OPENAI_API_KEY")
 
             client = OpenAI(
                 api_key=api_key,  # this is also the default, it can be omitted
