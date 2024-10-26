@@ -28,9 +28,11 @@ nvidia-nccl-cu12==2.21.5
 nvidia-nvjitlink-cu12==12.4.127
 nvidia-nvtx-cu12==12.4.127
 packaging==24.1
+pillow==11.0.0
 psutil==6.1.0
 pydantic==2.9.2
 pydantic_core==2.23.4
+pytesseract==0.3.13
 PyYAML==6.0.2
 regex==2024.9.11
 requests==2.32.3
