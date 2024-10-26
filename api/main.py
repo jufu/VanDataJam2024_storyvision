@@ -6,8 +6,12 @@ from modules.description_enhancer import DescriptionEnhancer
 from modules.text_to_speech import TextToSpeech
 from modules.storytell import StoryTell
 import os
+import uvicorn
+from dotenv import load_dotenv
 
 app = FastAPI()
+
+load_dotenv()
 
 # Initialize modules with error handling
 try:
@@ -15,6 +19,7 @@ try:
     image_captioner = ImageCaptioner()
     description_enhancer = DescriptionEnhancer()
     text_to_speech = TextToSpeech()
+    StoryTell = StoryTell()
 except Exception as e:
     print(f"Error initializing modules: {e}")
     ocr_processor, image_captioner, description_enhancer, text_to_speech = None, None, None, None
@@ -71,7 +76,7 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
     # Step 4: OpenAI Storytell
     story_for_audio = None
     try:
-        story_for_audio = StoryTell.storytell(enhanced_description)
+        story_for_audio = StoryTell.generate_storytell(text=enhanced_description)
     except Exception as e:
         print(f"Error during story enhancement: {e}")
         story_for_audio = "An engaging story could not be generated due to a processing error."
@@ -87,3 +92,6 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
 
     # Return the generated audio file
     return FileResponse(audio_path, media_type="audio/mpeg", filename="output.mp3")
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
