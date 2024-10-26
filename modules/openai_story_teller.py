@@ -2,7 +2,7 @@ from openai import OpenAI
 import os
 
 
-class StoryTell:
+class OpenAIStoryTeller:
     def __init__(self, lang="en"):
         """
         Initializes the TextToSpeech class for generating audio from text.
@@ -12,7 +12,7 @@ class StoryTell:
         """
         self.lang = lang
 
-    def generate_storytell(self, text_from_visuals, extracted_text):
+    def generate_story(self, text_from_visuals, extracted_text):
         """
         Generates a LLM optimized story from the provided text.
 
