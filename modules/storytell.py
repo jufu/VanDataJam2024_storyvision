@@ -12,7 +12,7 @@ class StoryTell:
         """
         self.lang = lang
 
-    def generate_storytell(self, text):
+    def generate_storytell(self, text_from_visuals, extracted_text):
         """
         Generates a LLM optimized story from the provided text.
 
@@ -35,14 +35,16 @@ class StoryTell:
                 messages=[
                     {
                         "role": "system",
-                        "content": "Imagine you are telling a story to a young child based on a children’s storybook page description. Summarize the description in simple, engaging language as if you are narrating a story aloud, using phrases and words that bring each scene to life and create a warm, friendly tone. Keep it concise but add a sense of wonder or excitement that will work well for text-to-speech narration.",
+                        "content": """Imagine you are telling a story from one page of a children’s storybook page. Summarize the description in simple, engaging language as if you are narrating a story aloud, using phrases and words that bring each scene to life and create a warm, friendly tone. Avoid adding any new information that is not in the text of the page. Keep it under 50 words
+                        """,
                     },
                     {
                         "role": "user",
-                        "content": f"Here is the page description: {text}",
+                        "content": f"Here is the page description of the visuals: {text_from_visuals}. More importantly, here is a text from the page in the page: {extracted_text}.",
                     },
                 ],
                 model="gpt-4o-mini",
+                temperature=0.3,  # Adjust the temperature to control the creativity of the response
             )
             print(response.headers.get("x-ratelimit-limit-tokens"))
 
