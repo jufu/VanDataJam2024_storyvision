@@ -76,7 +76,7 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
     # Step 4: OpenAI Storytell
     story_for_audio = None
     try:
-        story_for_audio = StoryTell.generate_storytell(text=enhanced_description)
+        story_for_audio = StoryTell.generate_storytell(text_from_visuals=enhanced_description, extracted_text=extracted_text)
     except Exception as e:
         print(f"Error during story enhancement: {e}")
         story_for_audio = "An engaging story could not be generated due to a processing error."
