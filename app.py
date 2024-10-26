@@ -5,8 +5,12 @@ from io import BytesIO
 # FastAPI backend URL
 FASTAPI_URL = "http://127.0.0.1:8000/process-image"
 
-st.title("Accessible Storybook Narrator")
+st.title("Story Vision")
 st.write("Upload an image, and the app will generate an engaging audio description!")
+
+# TTS Service Selection
+tts_option = st.selectbox(
+    "Choose Text-to-Speech Service", ("Google TTS", "ElevenLabs TTS"))
 
 # File uploader widget
 uploaded_file = st.file_uploader(
@@ -18,6 +22,7 @@ if uploaded_file is not None:
         # Send the uploaded file to the FastAPI endpoint
         files = {"file": (uploaded_file.name, uploaded_file,
                           "multipart/form-data")}
+        data = {"tts_option": tts_option}
         try:
             response = requests.post(FASTAPI_URL, files=files)
             response.raise_for_status()  # Raises error if response status code is not 200

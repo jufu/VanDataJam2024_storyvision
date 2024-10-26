@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import FileResponse
 from modules.ocr_processor import OCRProcessor
 from modules.image_captioner import ImageCaptioner
@@ -21,7 +21,7 @@ except Exception as e:
 
 
 @app.post("/process-image")
-async def process_image(file: UploadFile = File(...)):
+async def process_image(file: UploadFile = File(...), tts_option: str = Form("Google TTS")):
     """
     Endpoint to process an uploaded image and return an audio file with a generated description.
 
