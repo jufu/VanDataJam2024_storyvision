@@ -43,42 +43,47 @@ class PDFExtractor:
 
         Returns:
             list: List of paths to the saved text files.
+            list: List of page numbers to extract images from.
         """
         text_paths = []
-        for page_num in range(len(doc)):
-            page = doc[page_num]
+        pages = []
+        for i, page in enumerate(doc):
             text = page.get_text()
             clean_text = re.sub(r'\s+', ' ', text)
-            text_path = os.path.join(self.text_output_folder, f"{
-                                     self.unique_id}_page_{page_num}.txt")
-            with open(text_path, 'wb') as out:
-                out.write(clean_text.encode('utf-8'))
-            text_paths.append(text_path)
-        return text_paths
+            if re.search(r'\d+/\d+$', text):
+                text_path = os.path.join(self.text_output_folder, f"{
+                                        self.unique_id}_page_{i}.txt")
+                with open(text_path, 'wb') as out:
+                    out.write(clean_text.encode('utf-8'))
+                text_paths.append(text_path)
+                pages.append(i)
 
-    def _extract_images(self, doc):
+        return text_paths, pages
+
+    def _extract_images(self, doc, pages):
         """
         Extracts images from each page in the PDF document and saves them as PNG files.
 
         Args:
             doc (pymupdf.Document): The PDF document.
+            pages (list): List of page numbers to extract images from.
 
         Returns:
             list: List of paths to the saved images.
         """
         images_paths = []
-        for page_num in range(len(doc)):
-            page = doc[page_num]
-            images = page.get_images(full=True)
-            for img_index, img in enumerate(images):
-                xref = img[0]
-                base_image = doc.extract_image(xref)
-                image_bytes = base_image["image"]
-                image = Image.open(io.BytesIO(image_bytes))
-                image_path = os.path.join(self.image_output_folder, f"{self.unique_id}_page_{
-                                          page_num}_image_{img_index}.png")
-                image.save(image_path)
-                images_paths.append(image_path)
+        for page in doc:
+            if page.number in pages:
+                images = page.get_images(full=True)
+                for img_index, img in enumerate(images):
+                    xref = img[0]
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    image = Image.open(io.BytesIO(image_bytes))
+                    image_path = os.path.join(self.image_output_folder, f"{self.unique_id}_page_{
+                                            page.number}_image_{img_index}.png")
+                    image.save(image_path)
+                    images_paths.append(image_path)
         return images_paths
 
     def preprocess_story(self):
@@ -91,8 +96,8 @@ class PDFExtractor:
         doc = pymupdf.open(self.pdf_path)
 
         # Extract text and images
-        text_paths = self._extract_text(doc)
-        images_paths = self._extract_images(doc)
+        text_paths, pages = self._extract_text(doc)
+        images_paths = self._extract_images(doc, pages)
 
         doc.close()
 
