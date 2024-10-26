@@ -18,14 +18,24 @@ if uploaded_file is not None:
         # Send the uploaded file to the FastAPI endpoint
         files = {"file": (uploaded_file.name, uploaded_file,
                           "multipart/form-data")}
-        response = requests.post(FASTAPI_URL, files=files)
+        try:
+            response = requests.post(FASTAPI_URL, files=files)
+            response.raise_for_status()  # Raises error if response status code is not 200
 
-        # Check if the request was successful
-        if response.status_code == 200:
             # Load the audio content
             audio_data = BytesIO(response.content)
             # Play the audio in Streamlit
             st.audio(audio_data, format="audio/mp3")
             st.success("Audio description generated successfully!")
-        else:
-            st.error("Failed to generate audio. Please try again.")
+
+        except requests.exceptions.HTTPError as http_err:
+            if response.status_code == 503:
+                st.error(
+                    "Service is currently unavailable. Please ensure all modules are installed and accessible.")
+            elif response.status_code == 500:
+                st.error(
+                    "There was an error generating the audio. Please try again.")
+            else:
+                st.error(f"HTTP error occurred: {http_err}")
+        except requests.exceptions.RequestException as err:
+            st.error(f"Error connecting to the backend: {err}")
