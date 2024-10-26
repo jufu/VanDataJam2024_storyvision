@@ -7,7 +7,7 @@ import re
 def extract_tex(doc, output_txt):
     # create output file
     out = open(output_txt, 'wb')
-    
+
     # iterate through pages and extract text
     for page in doc:
         text = page.get_text()
@@ -24,7 +24,7 @@ def extract_images(doc):
             xref = img[0]
             base_image = doc.extract_image(xref)
             image_bytes = base_image["image"]
-            
+
             image = Image.open(io.BytesIO(image_bytes))
             image.save(f"data/processed/page_{page.number}_image_{img_index}.png")
 
@@ -34,6 +34,7 @@ def preprocess_story(pdf_path, output_txt):
     extract_tex(doc, output_txt)
     extract_images(doc)
     doc.close()
+
 
 # running with example story
 pdf_file = 'data/60810-the-picnic.pdf'
