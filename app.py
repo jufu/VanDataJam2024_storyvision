@@ -14,10 +14,10 @@ tts_option = st.selectbox(
 
 # File uploader widget
 uploaded_file = st.file_uploader(
-    "Choose an image file", type=["jpg", "jpeg", "png"])
+    "Choose an image file", type=["pdf"])
 # Display the uploaded image
-if uploaded_file is not None:
-    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+# if uploaded_file is not None:
+#     st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
 # Display button to trigger processing
 if uploaded_file is not None:
