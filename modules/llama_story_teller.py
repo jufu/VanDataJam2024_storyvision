@@ -3,7 +3,7 @@ import torch
 import requests
 
 
-class DescriptionEnhancer:
+class LlamaStoryTeller:
     def __init__(self, model_name="gpt2-large", device=None):
         """
         Initializes the DescriptionEnhancer with a specified model.
@@ -14,13 +14,13 @@ class DescriptionEnhancer:
                           Automatically detects GPU if available.
         """
         # Set device (default to GPU if available)
-        self.device = device if device else (
-            "cuda" if torch.cuda.is_available() else "cpu")
+        # self.device = device if device else (
+        #     "cuda" if torch.cuda.is_available() else "cpu")
 
         # Load the text generation model and tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(model_name)
-        self.model.to(self.device)
+        # self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        # self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        # self.model.to(self.device)
         self.api_url = "http://localhost:11434/api/generate"
 
     # def enhance_description(self, caption, max_length=100):
@@ -62,7 +62,7 @@ class DescriptionEnhancer:
 
     #     return enhanced_description
 
-    def enhance_description(self, caption):
+    def generate_story(self, text_from_visuals, extracted_text):
         """
         Sends a request to the Ollama API to enhance the caption into a
         child-friendly, engaging story.
@@ -77,7 +77,8 @@ class DescriptionEnhancer:
         # TODO Update with this prompt
         """"prompt": "Here is a caption from children's story book page: 'a cartoon of two girls talking to each other'. And here part of the story related to the image ' Once upon atime there lived twin sisters. Their names were Tinky and Pinky. Their mother told that they should not go to a particular pond. But they wanted to know what was there in the pond. So the went to the pond. suddenly friendly monster sprang up.'.Describe it vividly with excitement and emotions as if telling a story to visually impaired child. The story continues in next page so do not add anything that is not there in the prompt",
         """
-        prompt = f"Imagine a magical scene based on this description for children: '{caption}'. Make it vivid, exciting, and full of emotions."
+        prompt = f"Imagine a magical scene based on this description for children: '{
+            text_from_visuals}'. Make it vivid, exciting, and full of emotions."
 
         # Set up the request payload
         payload = {

@@ -12,12 +12,16 @@ st.write("Upload an image, and the app will generate an engaging audio descripti
 tts_option = st.selectbox(
     "Choose Text-to-Speech Service", ("Google TTS", "ElevenLabs TTS"))
 
+# LLM Service Selection
+llm_option = st.selectbox(
+    "Choose LLM Service", ("llama2", "openai"))
+
 # File uploader widget
 uploaded_file = st.file_uploader(
-    "Choose an image file", type=["jpg", "jpeg", "png"])
+    "Choose an image file", type=["pdf"])
 # Display the uploaded image
-if uploaded_file is not None:
-    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+# if uploaded_file is not None:
+#     st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
 
 # Display button to trigger processing
 if uploaded_file is not None:
@@ -25,7 +29,7 @@ if uploaded_file is not None:
         # Send the uploaded file to the FastAPI endpoint
         files = {"file": (uploaded_file.name, uploaded_file,
                           "multipart/form-data")}
-        data = {"tts_option": tts_option}
+        data = {"tts_option": tts_option, "llm_option": llm_option}
         try:
             response = requests.post(FASTAPI_URL, files=files)
             response.raise_for_status()  # Raises error if response status code is not 200
