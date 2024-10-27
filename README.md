@@ -82,15 +82,15 @@ pip install -r requirements.txt
 
 ### 6. Install and Set Up Ollama (for Llama 2)
 
-To use Llama 2 for description enhancement, install **Ollama**:
+To use Llama 3 for description enhancement, install **Ollama**:
 
 1. **Install Ollama**:
    - **macOS**: `brew install ollama/tap/ollama`
    - For other platforms, visit the [Ollama website](https://ollama.com/).
 
-2. **Pull the Llama 2 Model**:
+2. **Pull the Llama 3 Model**:
    ```bash
-   ollama pull llama2
+   ollama pull llama3
    ```
 
 3. **Start the Ollama API**:
