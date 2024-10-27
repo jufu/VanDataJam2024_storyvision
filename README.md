@@ -175,7 +175,11 @@ uvicorn api.main:app --reload
 - You can test the API endpoints via the documentation at `http://127.0.0.1:8000/docs`.
 
 ### App Screenshots
+![image](https://github.com/user-attachments/assets/b7795013-b45f-4984-b29b-0ac85208b11b)
 
+![image](https://github.com/user-attachments/assets/3de1ff74-53b1-4fc8-94ae-2692138550a5)
+
+![image](https://github.com/user-attachments/assets/46e7a23b-9cad-41d2-84d2-47ad92227fa2)
 ---
 
 ## Usage
