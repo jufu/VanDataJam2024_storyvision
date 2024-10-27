@@ -1,208 +1,316 @@
-# Story Vision
+<div align="center">
 
-This project provides an accessible, interactive storybook narrator for visually impaired children. By uploading images of storybook pages, users can generate engaging, emotion-filled audio descriptions, bringing stories to life in a fun and imaginative way.
+<a href="https://trendshift.io/repositories/10489" target="_blank"><img src="https://trendshift.io/api/badge/repositories/10489" alt="2noise%2FChatTTS | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-## Table of Contents
+# ChatTTS
+A generative speech model for daily dialogue.
 
-1. [Features](#features)
-2. [Project Architecture](#project-architecture)
-3. [Setup and Installation](#setup-and-installation)
-4. [Running the App](#running-the-app)
-5. [Usage](#usage)
-6. [Troubleshooting](#troubleshooting)
-7. [Future Enhancements](#future-enhancements)
+[![Licence](https://img.shields.io/github/license/2noise/ChatTTS?style=for-the-badge)](https://github.com/2noise/ChatTTS/blob/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/ChatTTS.svg?style=for-the-badge&color=green)](https://pypi.org/project/ChatTTS)
 
----
+[![Huggingface](https://img.shields.io/badge/🤗%20-Models-yellow.svg?style=for-the-badge)](https://huggingface.co/2Noise/ChatTTS)
+[![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?style=for-the-badge&logo=googlecolab&color=525252)](https://colab.research.google.com/github/2noise/ChatTTS/blob/main/examples/ipynb/colab.ipynb)
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Ud5Jxgx5yD)
 
-## Features
+**English** | [**简体中文**](docs/cn/README.md) | [**日本語**](docs/jp/README.md) | [**Русский**](docs/ru/README.md) | [**Español**](docs/es/README.md) | [**Français**](docs/fr/README.md)
 
-- **Image Upload**: Upload images of storybook pages.
-- **OCR Processing**: Extracts any text present in the uploaded images.
-- **Image Captioning**: Generates captions to provide context for the image.
-- **Enhanced Description**: Transforms the caption into a vivid, child-friendly narrative.
-- **Text-to-Speech (TTS)**: Converts the generated description into an audio file.
-- **Interactive Web UI**: A user-friendly interface built with Streamlit for easy interaction.
+</div>
 
----
+## Introduction
+> [!Note]
+> This repo contains the algorithm infrastructure and some simple examples.
 
-## Project Architecture
+> [!Tip]
+> For the extended end-user products, please refer to the index repo [Awesome-ChatTTS](https://github.com/libukai/Awesome-ChatTTS/tree/en) maintained by the community.
 
-The project consists of the following key components:
+ChatTTS is a text-to-speech model designed specifically for dialogue scenarios such as LLM assistant.
 
-1. **Modules**:
-   - `OCR Processor`: Extracts text from images.
-   - `Image Captioner`: Generates captions for the image.
-   - `Description Enhancer`: Converts the caption into an engaging narrative.
-   - `Text-to-Speech (TTS)`: Converts text descriptions into audio files.
-2. **API**:
-   - FastAPI endpoints handle image processing and return the generated audio.
-3. **UI**:
-   - Streamlit app allows users to interact with the system via a web interface.
+### Supported Languages
+- [x] English
+- [x] Chinese
+- [ ] Coming Soon...
 
----
+### Highlights
+> You can refer to **[this video on Bilibili](https://www.bilibili.com/video/BV1zn4y1o7iV)** for the detailed description.
 
-## Setup and Installation
+1. **Conversational TTS**: ChatTTS is optimized for dialogue-based tasks, enabling natural and expressive speech synthesis. It supports multiple speakers, facilitating interactive conversations.
+2. **Fine-grained Control**: The model could predict and control fine-grained prosodic features, including laughter, pauses, and interjections. 
+3. **Better Prosody**: ChatTTS surpasses most of open-source TTS models in terms of prosody. We provide pretrained models to support further research and development.
 
-### 1. Prerequisites
+### Dataset & Model
+> [!Important]
+> The released model is for academic purposes only.
 
-- **Python 3.12.2**
-- **Git**
-- **[Ollama](https://ollama.com/)** (for running Llama 2, if available)
-- **Tesseract OCR** (for text extraction from images)
+- The main model is trained with Chinese and English audio data of 100,000+ hours.
+- The open-source version on **[HuggingFace](https://huggingface.co/2Noise/ChatTTS)** is a 40,000 hours pre-trained model without SFT.
 
-### 2. Clone the Repository
+### Roadmap
+- [x] Open-source the 40k-hours-base model and spk_stats file.
+- [x] Streaming audio generation.
+- [x] Open-source DVAE encoder and zero shot inferring code.
+- [ ] Multi-emotion controlling.
+- [ ] ChatTTS.cpp (new repo in `2noise` org is welcomed)
 
+### Licenses
+
+#### The Code
+
+The code is published under `AGPLv3+` license.
+
+#### The model
+
+The model is published under `CC BY-NC 4.0` license. It is intended for educational and research use, and should not be used for any commercial or illegal purposes. The authors do not guarantee the accuracy, completeness, or reliability of the information. The information and data used in this repo, are for academic and research purposes only. The data obtained from publicly available sources, and the authors do not claim any ownership or copyright over the data.
+
+### Disclaimer
+
+ChatTTS is a powerful text-to-speech system. However, it is very important to utilize this technology responsibly and ethically. To limit the use of ChatTTS, we added a small amount of high-frequency noise during the training of the 40,000-hour model, and compressed the audio quality as much as possible using MP3 format, to prevent malicious actors from potentially using it for criminal purposes. At the same time, we have internally trained a detection model and plan to open-source it in the future.
+
+### Contact
+> GitHub issues/PRs are always welcomed.
+
+#### Formal Inquiries
+For formal inquiries about the model and roadmap, please contact us at **open-source@2noise.com**.
+
+#### Online Chat
+##### 1. QQ Group (Chinese Social APP)
+- **Group 1**, 808364215
+- **Group 2**, 230696694
+- **Group 3**, 933639842
+- **Group 4**, 608667975
+
+##### 2. Discord Server
+Join by clicking [here](https://discord.gg/Ud5Jxgx5yD).
+
+## Get Started
+### Clone Repo
 ```bash
-git clone https://github.com/jufu/VanDataJam2024_storyvision
-cd VanDataJam2024_storyvision
+git clone https://github.com/2noise/ChatTTS
+cd ChatTTS
 ```
 
-### 3. Set Up the Virtual Environment
-
-Create a virtual environment and activate it:
-
+### Install requirements
+#### 1. Install Directly
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows, use venv\Scripts\activate
+pip install --upgrade -r requirements.txt
 ```
 
-### 4. Install Dependencies
-
-Install project dependencies from `requirements.txt`:
-
+#### 2. Install from conda
 ```bash
+conda create -n chattts
+conda activate chattts
 pip install -r requirements.txt
 ```
 
-### 5. Install and Set Up Tesseract OCR
-
-- **macOS**: `brew install tesseract`
-- **Ubuntu**: `sudo apt update && sudo apt install tesseract-ocr`
-- **Windows**: Download the installer from [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki) and follow the installation instructions.
-
-### 6. Install and Set Up Ollama (for Llama 2)
-
-To use Llama 2 for description enhancement, install **Ollama**:
-
-1. **Install Ollama**:
-   - **macOS**: `brew install ollama/tap/ollama`
-   - For other platforms, visit the [Ollama website](https://ollama.com/).
-
-2. **Pull the Llama 2 Model**:
-   ```bash
-   ollama pull llama2
-   ```
-
-3. **Start the Ollama API**:
-   ```bash
-   ollama serve
-   ```
-
-   This starts the Ollama API at `http://localhost:11434`, which the app will use for generating descriptions.
-
-### 7. Environment Setup
-
-This project requires some environment variables (like API keys or other sensitive information) to be configured locally. To simplify setup, we’ve included a `.env_template` file that you can use as a reference for creating your own `.env` file.
-
-#### **Steps to Set Up Your Local Environment Variables**
-
-1. **Copy the Template File**:
-   - In the project’s root directory, copy the `.env_template` file to create your own `.env` file:
-
-     ```bash
-     cp .env_template .env
-     ```
-
-2. **Edit the `.env` File**:
-   - Open the newly created `.env` file and update each environment variable with your local or project-specific values.
-
-   - For example, if the `.env_template` contains:
-     ```plaintext
-     MY_API_KEY=your_api_key_here
-     ANOTHER_API_KEY=another_api_key_here
-     TTS_SERVICE=gtts
-     ```
-   - Replace `your_api_key_here` and other placeholders with your actual values:
-     ```plaintext
-     MY_API_KEY=abcdef12345
-     ANOTHER_API_KEY=zyx98765
-     TTS_SERVICE=gtts
-     ```
-
-3. **Save the `.env` File**:
-   - After updating the variables, save the `.env` file. These values will now load automatically whenever the app runs.
-
-#### **Using Environment Variables in the Code**
-
-- Environment variables set in `.env` will automatically be accessible in the application, ensuring that sensitive information like API keys is never hardcoded into the source code.
-  
-- For team members, please don’t commit your `.env` file to version control to keep sensitive information secure. The `.env_template` file is included in version control for reference only.
-
-#### **Example Variables in `.env_template`**
-
-Here’s an example of what the `.env_template` file might contain:
-
-```plaintext
-# API Keys
-MY_API_KEY=your_api_key_here
-ANOTHER_API_KEY=another_api_key_here
-
-# TTS Service (default: gtts)
-TTS_SERVICE=gtts
+#### Optional: Install vLLM (Linux only)
+```bash
+pip install safetensors vllm==0.2.7 torchaudio
 ```
 
-Each team member should replace the placeholders with their own credentials and preferred settings.
+#### Unrecommended Optional: Install TransformerEngine if using NVIDIA GPU (Linux only)
+> [!Warning]
+> DO NOT INSTALL! 
+> The adaptation of TransformerEngine is currently under development and CANNOT run properly now. 
+> Only install it on developing purpose. See more details on at #672 #676
 
----
-
-### **Note on Security**
-
-The `.env` file is included in `.gitignore` to ensure it is not accidentally committed to version control. Always double-check before committing that sensitive information is not being pushed to the repository.
----
-## Running the App
-
-The app includes two main components: the FastAPI backend and the Streamlit frontend. Make sure Ollama’s API server is running if you plan to use Llama 2.
-
-### Step 1: Start the FastAPI Server
-
-In one terminal window, start the FastAPI server:
+> [!Note]
+> The installation process is very slow.
 
 ```bash
-uvicorn api.main:app --reload
+pip install git+https://github.com/NVIDIA/TransformerEngine.git@stable
 ```
 
-- This starts the FastAPI backend at `http://127.0.0.1:8000`.
-- You can test the API endpoints via the documentation at `http://127.0.0.1:8000/docs`.
+#### Unrecommended Optional: Install FlashAttention-2 (mainly NVIDIA GPU)
+> [!Warning]
+> DO NOT INSTALL! 
+> Currently the FlashAttention-2 will slow down the generating speed according to [this issue](https://github.com/huggingface/transformers/issues/26990). 
+> Only install it on developing purpose.
 
-### Step 2: Start the Streamlit Frontend
+> [!Note]
+> See supported devices at the [Hugging Face Doc](https://huggingface.co/docs/transformers/perf_infer_gpu_one#flashattention-2).
 
-In a separate terminal window, start the Streamlit app:
 
 ```bash
-streamlit run app.py
+pip install flash-attn --no-build-isolation
 ```
 
-- This starts the Streamlit frontend at `http://localhost:8501`.
-- Use this interface to upload images, generate descriptions, and play the resulting audio.
+### Quick Start
+> Make sure you are under the project root directory when you execute these commands below.
 
----
+#### 1. Launch WebUI
+```bash
+python examples/web/webui.py
+```
 
-## Usage
+#### 2. Infer by Command Line
+> It will save audio to `./output_audio_n.mp3`
 
-1. **Open the Streamlit UI**: Go to `http://localhost:8501`.
-2. **Upload an Image**: Use the file uploader to select an image containing a storybook page.
-3. **Generate Audio**: Click "Generate Audio Description" to process the image.
-4. **Play the Audio**: Once processing is complete, listen to the generated audio description.
+```bash
+python examples/cmd/run.py "Your text 1." "Your text 2."
+```
 
----
+## Installation
 
-## Troubleshooting
+1. Install the stable version from PyPI
+```bash
+pip install ChatTTS
+```
 
-### Common Issues
+2. Install the latest version from GitHub
+```bash
+pip install git+https://github.com/2noise/ChatTTS
+```
 
-- **Error: `address already in use`**: Ensure there’s only one instance of Ollama or FastAPI running on the same port.
-- **404 Error on API Requests**: Verify that Ollama is running on `http://localhost:11434`. Restart if necessary.
-- **Model Initialization Failure**: If a module fails to initialize, the app will continue but may return a message saying, “Service is currently unavailable.”
-- **Tesseract Not Found**: Ensure Tesseract is installed correctly and available in your system PATH.
+3. Install from local directory in dev mode
+```bash
+pip install -e .
+```
 
----
+### Basic Usage
+
+```python
+import ChatTTS
+import torch
+import torchaudio
+
+chat = ChatTTS.Chat()
+chat.load(compile=False) # Set to True for better performance
+
+texts = ["PUT YOUR 1st TEXT HERE", "PUT YOUR 2nd TEXT HERE"]
+
+wavs = chat.infer(texts)
+
+for i in range(len(wavs)):
+    """
+    In some versions of torchaudio, the first line works but in other versions, so does the second line.
+    """
+    try:
+        torchaudio.save(f"basic_output{i}.wav", torch.from_numpy(wavs[i]).unsqueeze(0), 24000)
+    except:
+        torchaudio.save(f"basic_output{i}.wav", torch.from_numpy(wavs[i]), 24000)
+```
+
+### Advanced Usage
+
+```python
+###################################
+# Sample a speaker from Gaussian.
+
+rand_spk = chat.sample_random_speaker()
+print(rand_spk) # save it for later timbre recovery
+
+params_infer_code = ChatTTS.Chat.InferCodeParams(
+    spk_emb = rand_spk, # add sampled speaker 
+    temperature = .3,   # using custom temperature
+    top_P = 0.7,        # top P decode
+    top_K = 20,         # top K decode
+)
+
+###################################
+# For sentence level manual control.
+
+# use oral_(0-9), laugh_(0-2), break_(0-7) 
+# to generate special token in text to synthesize.
+params_refine_text = ChatTTS.Chat.RefineTextParams(
+    prompt='[oral_2][laugh_0][break_6]',
+)
+
+wavs = chat.infer(
+    texts,
+    params_refine_text=params_refine_text,
+    params_infer_code=params_infer_code,
+)
+
+###################################
+# For word level manual control.
+
+text = 'What is [uv_break]your favorite english food?[laugh][lbreak]'
+wavs = chat.infer(text, skip_refine_text=True, params_refine_text=params_refine_text,  params_infer_code=params_infer_code)
+"""
+In some versions of torchaudio, the first line works but in other versions, so does the second line.
+"""
+try:
+    torchaudio.save("word_level_output.wav", torch.from_numpy(wavs[0]).unsqueeze(0), 24000)
+except:
+    torchaudio.save("word_level_output.wav", torch.from_numpy(wavs[0]), 24000)
+```
+
+<details open>
+  <summary><h4>Example: self introduction</h4></summary>
+
+```python
+inputs_en = """
+chat T T S is a text to speech model designed for dialogue applications. 
+[uv_break]it supports mixed language input [uv_break]and offers multi speaker 
+capabilities with precise control over prosodic elements like 
+[uv_break]laughter[uv_break][laugh], [uv_break]pauses, [uv_break]and intonation. 
+[uv_break]it delivers natural and expressive speech,[uv_break]so please
+[uv_break] use the project responsibly at your own risk.[uv_break]
+""".replace('\n', '') # English is still experimental.
+
+params_refine_text = ChatTTS.Chat.RefineTextParams(
+    prompt='[oral_2][laugh_0][break_4]',
+)
+
+audio_array_en = chat.infer(inputs_en, params_refine_text=params_refine_text)
+torchaudio.save("self_introduction_output.wav", torch.from_numpy(audio_array_en[0]), 24000)
+```
+
+<table>
+<tr>
+<td align="center">
+
+**male speaker**
+
+</td>
+<td align="center">
+
+**female speaker**
+
+</td>
+</tr>
+<tr>
+<td align="center">
+
+[male speaker](https://github.com/2noise/ChatTTS/assets/130631963/e0f51251-db7f-4d39-a0e9-3e095bb65de1)
+
+</td>
+<td align="center">
+
+[female speaker](https://github.com/2noise/ChatTTS/assets/130631963/f5dcdd01-1091-47c5-8241-c4f6aaaa8bbd)
+
+</td>
+</tr>
+</table>
+
+
+</details>
+
+## FAQ
+
+#### 1. How much VRAM do I need? How about infer speed?
+For a 30-second audio clip, at least 4GB of GPU memory is required. For the 4090 GPU, it can generate audio corresponding to approximately 7 semantic tokens per second. The Real-Time Factor (RTF) is around 0.3.
+
+#### 2. Model stability is not good enough, with issues such as multi speakers or poor audio quality.
+
+This is a problem that typically occurs with autoregressive models (for bark and valle). It's generally difficult to avoid. One can try multiple samples to find a suitable result.
+
+#### 3. Besides laughter, can we control anything else? Can we control other emotions?
+
+In the current released model, the only token-level control units are `[laugh]`, `[uv_break]`, and `[lbreak]`. In future versions, we may open-source models with additional emotional control capabilities.
+
+## Acknowledgements
+- [bark](https://github.com/suno-ai/bark), [XTTSv2](https://github.com/coqui-ai/TTS) and [valle](https://arxiv.org/abs/2301.02111) demonstrate a remarkable TTS result by an autoregressive-style system.
+- [fish-speech](https://github.com/fishaudio/fish-speech) reveals capability of GVQ as audio tokenizer for LLM modeling.
+- [vocos](https://github.com/gemelo-ai/vocos) which is used as a pretrained vocoder.
+
+## Special Appreciation
+- [wlu-audio lab](https://audio.westlake.edu.cn/) for early algorithm experiments.
+
+## Thanks to all contributors for their efforts
+[![contributors](https://contrib.rocks/image?repo=2noise/ChatTTS)](https://github.com/2noise/ChatTTS/graphs/contributors)
+
+<div align="center">
+
+  ![counter](https://counter.seku.su/cmoe?name=chattts&theme=mbs)
+
+</div>
