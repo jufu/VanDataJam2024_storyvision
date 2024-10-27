@@ -44,13 +44,22 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
             status_code=503, detail="Required modules are not available.")
 
     # Save the uploaded file
-    image_path = f"./temp/{file.filename}"
-    pdf_path = f"./temp/{file.filename}"
     output_folder = "./temp"
-    os.makedirs(os.path.dirname(image_path), exist_ok=True)
+    books_folder = f"{output_folder}/books"
+    pdf_path = f"{books_folder}/{file.filename}"
+    text_folder = f"{output_folder}/text"
+    images_folder = f"{output_folder}/images"
+    audio_folder = f"{output_folder}/audio"
 
-    with open(image_path, "wb") as image_file:
-        image_file.write(await file.read())
+    # Create each folder directly
+    os.makedirs(books_folder, exist_ok=True)
+    os.makedirs(images_folder, exist_ok=True)
+    os.makedirs(audio_folder, exist_ok=True)
+    os.makedirs(text_folder, exist_ok=True)
+    os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+
+    with open(pdf_path, "wb") as pdf_file:
+        pdf_file.write(await file.read())
 
     # # Step 1: Extract text from image (OCR)
     # try:
@@ -92,15 +101,17 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
 
     # Step 4: Convert description to audio
     try:
-        audio_path = "./temp/output.mp3"
-        text_to_speech.generate_audio(story_for_audio, audio_path, tts_option)
+        audio_file_name = f"{uuid}_page_0_audio_0.mp3"
+        audio_file_path = f"{audio_folder}/{audio_file_name}"
+        text_to_speech.generate_audio(
+            story_for_audio, audio_file_path, tts_option)
     except Exception as e:
         print(f"Error during text-to-speech generation: {e}")
         raise HTTPException(
             status_code=500, detail="Failed to generate audio.")
 
     # Return the generated audio file
-    return FileResponse(audio_path, media_type="audio/mpeg", filename="output.mp3")
+    return FileResponse(audio_file_path, media_type="audio/mpeg", filename=audio_file_name)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
