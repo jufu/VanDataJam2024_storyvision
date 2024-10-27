@@ -83,7 +83,7 @@ class PDFExtractor:
                     image_bytes = base_image["image"]
                     image = Image.open(io.BytesIO(image_bytes))
                     image_path = os.path.join(self.image_output_folder, f"{self.unique_id}_page_{
-                        page.number}_image_{img_index}.png")
+                        page.number}_image..png")
                     image.save(image_path)
                     images_paths.append(image_path)
         return images_paths

@@ -98,7 +98,7 @@ async def generate_story_from_text(image_caption, extracted_text, llm_option):
 async def generate_audio_from_text(uuid, index, tts_option, story_for_audio):
     print(f"Generating audio for story, uuid: {uuid}, index: {index}")
     try:
-        audio_file_name = f"{uuid}_page_{index}_audio_{index}.mp3"
+        audio_file_name = f"{uuid}_page_{index}_audio.mp3"
         audio_file_path = f"{audio_folder}/{audio_file_name}"
         text_to_speech.generate_audio(
             story_for_audio, audio_file_path, tts_option)
@@ -143,31 +143,56 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
         print(f"Error during PDF extraction: {e}")
         extracted_text = ""
 
-    # default to first image
-    image_path = images[0]
-    extracted_text = text_files[0]
+    # TODO for now we are generating all audio files at once. We can change this to generate audio files one by one to optimize the process
+    audio_files = []
+    for i in range(len(images)):
+        image_path = images[i]
+        extracted_text = text_files[i]
 
-    # Step 2: Generate image caption
-    image_caption = await generate_image_caption(image_path)
+        # Step 2: Generate image caption
+        image_caption = await generate_image_caption(image_path)
 
-    # Step 3: Generate Story
-    story_for_audio = await generate_story_from_text(image_caption=image_caption,
-                                                     extracted_text=extracted_text,
-                                                     llm_option=llm_option)
+        # Step 3: Generate Story
+        story_for_audio = await generate_story_from_text(image_caption=image_caption,
+                                                         extracted_text=extracted_text,
+                                                         llm_option=llm_option)
 
-    # Step 4: Convert description to audio
-    audio_file_path = await generate_audio_from_text(uuid, 0, tts_option, story_for_audio)
+        # Step 4: Convert description to audio
+        audio_file_path = await generate_audio_from_text(uuid, i, tts_option, story_for_audio)
+
+        audio_files.append(audio_file_path)
 
     # Return the generated audio file
-    extracted_data["audio_files"] = [audio_file_path]
+    extracted_data["audio_files"] = audio_files
     print(f"Returning extracted data: {extracted_data}")
     # return FileResponse(audio_file_path, media_type="audio/mpeg", filename=audio_file_name)
     return JSONResponse(content=extracted_data)
 
 
 @app.post("/generate_audio")
-async def generate_audio(uuid: str, index: int, tts_option: str = Form("Google TTS"), llm_option: str = Form("llama2")):
-    return JSONResponse(content={"message": "Not implemented yet.", "uuid": uuid, "index": index, "tts_option": tts_option, "llm_option": llm_option})
+async def generate_audio(uuid: str = Form(...),
+                         index: int = Form(...), tts_option: str = Form("Google TTS"), llm_option: str = Form("llama2")):
+    print(f"Generating audio for uuid: {uuid}, index: {index}")
+    # Step 1 : create image path and text path from uuid and index
+    image_path = f"{images_folder}/{uuid}_page_{index}_image.png"
+    text_path = f"{text_folder}/{uuid}_page_{index}.txt"
+
+    # Step 2: Read text from text file
+    with open(text_path, "r") as text_file:
+        extracted_text = text_file.read()
+
+    # Step 3: Generate image caption
+    image_caption = await generate_image_caption(image_path)
+
+    # Step 4: Generate Story
+    story_for_audio = await generate_story_from_text(image_caption=image_caption,
+                                                     extracted_text=extracted_text,
+                                                     llm_option=llm_option)
+
+    # Step 5: Convert description to audio
+    audio_file_path = await generate_audio_from_text(uuid, index, tts_option, story_for_audio)
+    data = {"audio_files": [audio_file_path]}
+    return JSONResponse(content=data)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

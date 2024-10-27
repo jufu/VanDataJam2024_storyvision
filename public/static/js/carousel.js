@@ -1,9 +1,51 @@
 // static/js/carousel.js
-const requestNextAudio = async ({ unique_id }) => { }
+
+// Function to preload an audio file
+const preloadAudio = (url) => {
+    return new Promise((resolve, reject) => {
+        const audio = new Audio();
+        audio.preload = 'auto';
+
+        audio.oncanplaythrough = () => {
+            console.log('Audio preloaded:', url);
+            resolve(url);
+        };
+
+        audio.onerror = (error) => {
+            console.error('Audio preload error:', error);
+            reject(error);
+        };
+
+        audio.src = url;
+        audio.load();
+    });
+};
+
 // Function to initialize the Bootstrap carousel
 const initializeCarousel = async ({ image_files, texts = [], audio_files = [], unique_id }) => {
+    console.log('Initializing carousel with:', {
+        imageCount: image_files.length,
+        audioCount: audio_files.length,
+        firstAudioFile: audio_files[0]
+    });
+
     const carouselContainer = document.getElementById("carouselContainer");
-    const audioPlayer = document.getElementById("audioPlayer"); // Assumes an audio player element is in HTML
+    const audioPlayer = document.getElementById("audioPlayer");
+
+    if (!audioPlayer) {
+        console.error('Audio player element not found!');
+        return;
+    }
+
+    // Preload the first audio file before continuing
+    if (audio_files.length > 0 && audio_files[0]) {
+        console.log('Preloading first audio file...');
+        try {
+            await preloadAudio(audio_files[0]);
+        } catch (error) {
+            console.error('Failed to preload first audio:', error);
+        }
+    }
 
     // Clear any existing content
     carouselContainer.innerHTML = '';
@@ -13,7 +55,6 @@ const initializeCarousel = async ({ image_files, texts = [], audio_files = [], u
         <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">`;
 
-    // Add each image as a carousel item
     image_files.forEach((image, index) => {
         carouselHTML += `
             <div class="carousel-item ${index === 0 ? 'active' : ''}">
@@ -25,7 +66,6 @@ const initializeCarousel = async ({ image_files, texts = [], audio_files = [], u
         `;
     });
 
-    // Add carousel controls (optional)
     carouselHTML += `
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -39,31 +79,58 @@ const initializeCarousel = async ({ image_files, texts = [], audio_files = [], u
         </div>
     `;
 
-    // Insert carousel into the container
     carouselContainer.innerHTML = carouselHTML;
 
-    // Initialize carousel with custom options
+    // Initialize carousel
     const carouselElement = document.getElementById('carouselExample');
     const carouselInstance = new bootstrap.Carousel(carouselElement, {
-        interval: 60000,   // Set interval between slides in milliseconds (e.g., 3000 for 3 seconds)
-        wrap: false,       // Enables looping of slides
-        pause: 'hover',    // Pauses carousel on hover
+        interval: 60000,  // No auto-slide
+        wrap: false,
+        pause: 'hover',
         keyboard: true
     });
 
-    let nextAudio = await requestNextAudio({ unique_id })
+    // Function to play audio
+    const playAudio = (audioSrc) => {
+        console.log('Playing audio:', audioSrc);
+        audioPlayer.src = audioSrc;
+        return audioPlayer.play().catch(error => {
+            console.error('Audio playback failed:', error);
+        });
+    };
 
-
-    // Set the first audio file to autoplay on load
-    if (audio_files.length > 0) {
-        audioPlayer.src = audio_files[0];
-        audioPlayer.play();
+    // Play the first audio file immediately since it's preloaded
+    if (audio_files.length > 0 && audio_files[0]) {
+        console.log('Starting first audio playback');
+        playAudio(audio_files[0]);
     }
 
-    // Add an event listener to detect slide changes
+    // Handle slide changes and play the corresponding audio
     carouselElement.addEventListener('slide.bs.carousel', function (event) {
-        console.log(`Slide changed to index: ${event.to}`);
-        // Custom action on slide change
-        // For example, update a counter or trigger audio narration for the new slide
+        console.log(`Slide changing to index: ${event.to}`);
+
+        // Check if there is a corresponding audio file for the slide index
+        if (audio_files[event.to]) {
+            playAudio(audio_files[event.to]);
+        } else {
+            console.warn(`No audio available for slide ${event.to}`);
+        }
     });
-}
+
+    // Add audio event listeners for debugging
+    audioPlayer.addEventListener('playing', () => {
+        console.log('Audio started playing');
+    });
+
+    audioPlayer.addEventListener('waiting', () => {
+        console.log('Audio is waiting for data');
+    });
+
+    audioPlayer.addEventListener('canplaythrough', () => {
+        console.log('Audio can play through without buffering');
+    });
+
+    audioPlayer.addEventListener('error', (e) => {
+        console.error('Audio error:', e.target.error);
+    });
+};
