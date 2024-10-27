@@ -1,5 +1,7 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request, UploadFile, File, Form, HTTPException
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from modules.ocr_processor import OCRProcessor
 from modules.image_captioner import ImageCaptioner
 from modules.text_to_speech import TextToSpeech
@@ -25,6 +27,19 @@ try:
 except Exception as e:
     print(f"Error initializing modules: {e}")
     ocr_processor, image_captioner, llama_story_teller, text_to_speech = None, None, None, None
+
+# initialize templates
+app.mount("/static", StaticFiles(directory="public/static"), name="static")
+app.mount("/temp", StaticFiles(directory="temp"), name="temp")
+templates = Jinja2Templates(directory="public")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    """
+    Endpoint to render the homepage.
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.post("/process-image")
@@ -71,10 +86,10 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
     # Step 1: Preprocess PDF
     try:
         pdf_extractor = PDFExtractor(pdf_path, output_folder)
-        extracted_pdf = pdf_extractor.preprocess_story()
-        uuid = extracted_pdf["unique_id"]
-        text_files = extracted_pdf["text_files"]
-        images = extracted_pdf["image_files"]
+        extracted_data = pdf_extractor.preprocess_story()
+        uuid = extracted_data["unique_id"]
+        text_files = extracted_data["text_files"]
+        images = extracted_data["image_files"]
     except Exception as e:
         print(f"Error during PDF extraction: {e}")
         extracted_text = ""
@@ -111,7 +126,9 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
             status_code=500, detail="Failed to generate audio.")
 
     # Return the generated audio file
-    return FileResponse(audio_file_path, media_type="audio/mpeg", filename=audio_file_name)
+    extracted_data["audio_files"] = [audio_file_path]
+    # return FileResponse(audio_file_path, media_type="audio/mpeg", filename=audio_file_name)
+    return JSONResponse(content=extracted_data)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
