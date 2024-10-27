@@ -16,7 +16,7 @@ class TextToSpeech:
         self.lang = lang
         self.elevellabs_api_key = os.getenv("ELEVENLABS_API_KEY")
 
-    def generate_audio(self, text, output_file="output.mp3", tts_option="Google TTS"):
+    def generate_audio(self, text, output_file="output.mp3", tts_option="ElevenLabs TTS"):
         """
         Generates an audio file from the provided text.
 
@@ -36,6 +36,7 @@ class TextToSpeech:
                 return output_file
             # Elevenlabs TTS
             elif tts_option == "ElevenLabs TTS":
+                print("Generating audio using ElevenLabs TTS")
                 # initialize eleven labs client
                 client = ElevenLabs(
                     api_key=self.elevellabs_api_key

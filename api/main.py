@@ -74,7 +74,6 @@ async def generate_image_caption(image_path):
     return image_caption
 
 
-
 async def generate_story_from_image_and_text_openai(image_path, extracted_text):
     """
     Function to generate a story from text.
@@ -88,11 +87,13 @@ async def generate_story_from_image_and_text_openai(image_path, extracted_text):
     print(f"Generating story from text")
     try:
 
-        story_for_audio = OpenAIStoryTeller.generate_openai_caption(image_path, extracted_text)
+        story_for_audio = OpenAIStoryTeller.generate_openai_caption(
+            image_path, extracted_text)
     except Exception as e:
         print(f"Error during description enhancement: {e}")
         story_for_audio = "An engaging description could not be generated due to a processing error."
     return story_for_audio
+
 
 async def generate_story_from_text(image_caption, extracted_text, llm_option):
     """
@@ -130,7 +131,7 @@ async def generate_audio_from_text(uuid, index, tts_option, story_for_audio):
 
 
 @app.post("/process-image")
-async def process_image(file: UploadFile = File(...), tts_option: str = Form("Google TTS"), llm_option: str = Form("llama2")):
+async def process_image(file: UploadFile = File(...), tts_option: str = Form("ElevenLabs TTS"), llm_option: str = Form("llama2")):
     """
     Endpoint to process an uploaded image and return an audio file with a generated description.
 
