@@ -80,7 +80,7 @@ pip install -r requirements.txt
 - **Ubuntu**: `sudo apt update && sudo apt install tesseract-ocr`
 - **Windows**: Download the installer from [Tesseract OCR](https://github.com/UB-Mannheim/tesseract/wiki) and follow the installation instructions.
 
-### 6. Install and Set Up Ollama (for Llama 2)
+### 6. Install and Set Up Ollama (for Llama 3)
 
 To use Llama 3 for description enhancement, install **Ollama**:
 

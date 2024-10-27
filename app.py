@@ -14,7 +14,7 @@ tts_option = st.selectbox(
 
 # LLM Service Selection
 llm_option = st.selectbox(
-    "Choose LLM Service", ("Meta Llama 3", "OpenAI"))
+    "Choose LLM Service", ("Llama 3", "OpenAI"))
 
 # File uploader widget
 uploaded_file = st.file_uploader(

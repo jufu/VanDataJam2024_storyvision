@@ -85,17 +85,19 @@ class LlamaStoryTeller:
         top_p = 0.8 # A higher value means the model have more possible words to consider, makes the generated text more diverse
         top_k = 50 # Control the number of high-probability options considered, reducing randomness while allowing some creativity
         frequency_penalty = 0.8 # A higher value helps prevent repetitive phrases and ensures more varied language in responses
+        presence_penalty = 0.5 # Encourages the model to bring in new ideas or vocabulary without rehashing previous content
         length_penalty = 1 # Penalizes longer sequences, encouraging the model to generate shorter, more concise outputs.
 
         # Set up the request payload
         payload = {
-            "model": "llama3",
+            "model": "llama3", # default: llama3-8.0B, use llama3-70b for faster performance
             "prompt": prompt,
             "max_new_tokens": max_new_tokens,
             "temperature": temperature,
             "top_p": top_p,
             "top_k": top_k,
             "frequency_penalty": frequency_penalty,
+            "presence_penalty": presence_penalty,
             "length_penalty": length_penalty,
             "stream": False
         }
