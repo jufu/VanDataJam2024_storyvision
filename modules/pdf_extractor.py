@@ -51,8 +51,10 @@ class PDFExtractor:
         for i, page in enumerate(doc):
             text = page.get_text()
             clean_text = re.sub(r'\s+', ' ', text)
-            if re.search(r'\d+/\d+$', text):
-                text_path = os.path.join(self.text_output_folder, f"{self.unique_id}_page_{i}.txt")
+            if re.search(r'\d+/\d+\s*$', clean_text):
+                clean_text = re.sub(r' \d+/\d+\s*$', '', clean_text)
+                text_path = os.path.join(self.text_output_folder, f"{
+                                        self.unique_id}_page_{i}.txt")
                 with open(text_path, 'wb') as out:
                     out.write(clean_text.encode('utf-8'))
                 text_paths.append(text_path)
