@@ -77,19 +77,21 @@ class LlamaStoryTeller:
         # TODO Update with this prompt
         """"prompt": "Here is a caption from children's story book page: 'a cartoon of two girls talking to each other'. And here part of the story related to the image ' Once upon atime there lived twin sisters. Their names were Tinky and Pinky. Their mother told that they should not go to a particular pond. But they wanted to know what was there in the pond. So the went to the pond. suddenly friendly monster sprang up.'.Describe it vividly with excitement and emotions as if telling a story to visually impaired child. The story continues in next page so do not add anything that is not there in the prompt",
         """
-        prompt = f"Imagine a magical scene based on this description from a children's story book page: '{
+        prompt = f"Imagine a magical scene based on this description from children's story book pages: '{
             text_from_visuals}'. Describe it as if talking to a young child, use simple words and make it fun to read. Describe it vividly with excitement and emotions as if describing it to a blind child."
         
-        temperature = 0.7 # Adjusts the "randomness" or creativity of the model’s output
+        max_new_tokens = 50 # Controls the length of the generated output, preventing it from being excessively long or too short.
+        temperature = 0.2 # Adjusts the "randomness" or creativity of the model’s output
         top_p = 0.8 # A higher value means the model have more possible words to consider, makes the generated text more diverse
         top_k = 50 # Control the number of high-probability options considered, reducing randomness while allowing some creativity
-        frequency_penalty = 1 # A higher value helps prevent repetitive phrases and ensures more varied language in responses
-        length_penalty = 0.7 # Penalizes longer sequences, encouraging the model to generate shorter, more concise outputs.
+        frequency_penalty = 0.8 # A higher value helps prevent repetitive phrases and ensures more varied language in responses
+        length_penalty = 1 # Penalizes longer sequences, encouraging the model to generate shorter, more concise outputs.
 
         # Set up the request payload
         payload = {
             "model": "llama3",
             "prompt": prompt,
+            "max_new_tokens": max_new_tokens,
             "temperature": temperature,
             "top_p": top_p,
             "top_k": top_k,
