@@ -2,7 +2,7 @@ from elevenlabs import Voice, VoiceSettings, play
 from elevenlabs.client import ElevenLabs
 
 client = ElevenLabs(
-    api_key="sk_52760c4684acb397c3909828c1179c065e21cdcacf6815b2"  # Replace with your actual API key
+    api_key="API_KEY"  # Replace with your actual API key
 )
 
 # Function to generate audio
