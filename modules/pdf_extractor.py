@@ -52,8 +52,7 @@ class PDFExtractor:
             text = page.get_text()
             clean_text = re.sub(r'\s+', ' ', text)
             if re.search(r'\d+/\d+$', text):
-                text_path = os.path.join(self.text_output_folder, f"{
-                    self.unique_id}_page_{i}.txt")
+                text_path = os.path.join(self.text_output_folder, f"{self.unique_id}_page_{i}.txt")
                 with open(text_path, 'wb') as out:
                     out.write(clean_text.encode('utf-8'))
                 text_paths.append(text_path)
@@ -82,8 +81,7 @@ class PDFExtractor:
                     base_image = doc.extract_image(xref)
                     image_bytes = base_image["image"]
                     image = Image.open(io.BytesIO(image_bytes))
-                    image_path = os.path.join(self.image_output_folder, f"{self.unique_id}_page_{
-                        page.number}_image..png")
+                    image_path = os.path.join(self.image_output_folder, f"{self.unique_id}_page_{page.number}_image..png")
                     image.save(image_path)
                     images_paths.append(image_path)
         return images_paths

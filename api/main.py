@@ -74,6 +74,26 @@ async def generate_image_caption(image_path):
     return image_caption
 
 
+
+async def generate_story_from_image_and_text_openai(image_path, extracted_text):
+    """
+    Function to generate a story from text.
+
+    Args:
+        text (str): Text to generate a story from.
+
+    Returns:
+        str: Generated story.
+    """
+    print(f"Generating story from text")
+    try:
+
+        story_for_audio = OpenAIStoryTeller.generate_openai_caption(image_path, extracted_text)
+    except Exception as e:
+        print(f"Error during description enhancement: {e}")
+        story_for_audio = "An engaging description could not be generated due to a processing error."
+    return story_for_audio
+
 async def generate_story_from_text(image_caption, extracted_text, llm_option):
     """
     Function to generate a story from text.
@@ -147,15 +167,20 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
     audio_files = []
     for i in range(len(images)):
         image_path = images[i]
-        extracted_text = text_files[i]
+        extracted_text = ""
+        with open(text_files[i], "r") as text_file:
+            extracted_text = text_file.read()
 
-        # Step 2: Generate image caption
-        image_caption = await generate_image_caption(image_path)
+        # # Step 2: Generate image caption
+        # image_caption = await generate_image_caption(image_path)
 
-        # Step 3: Generate Story
-        story_for_audio = await generate_story_from_text(image_caption=image_caption,
-                                                         extracted_text=extracted_text,
-                                                         llm_option=llm_option)
+        # # Step 3: Generate Story
+        # story_for_audio = await generate_story_from_text(image_caption=image_caption,
+        #                                                  extracted_text=extracted_text,
+        #                                                  llm_option=llm_option)
+
+        # Replace above two steps with OpenAI story generation
+        story_for_audio = await generate_story_from_image_and_text_openai(image_path, extracted_text)
 
         # Step 4: Convert description to audio
         audio_file_path = await generate_audio_from_text(uuid, i, tts_option, story_for_audio)
@@ -181,13 +206,16 @@ async def generate_audio(uuid: str = Form(...),
     with open(text_path, "r") as text_file:
         extracted_text = text_file.read()
 
-    # Step 3: Generate image caption
-    image_caption = await generate_image_caption(image_path)
+    # # Step 3: Generate image caption
+    # image_caption = await generate_image_caption(image_path)
 
-    # Step 4: Generate Story
-    story_for_audio = await generate_story_from_text(image_caption=image_caption,
-                                                     extracted_text=extracted_text,
-                                                     llm_option=llm_option)
+    # # Step 4: Generate Story
+    # story_for_audio = await generate_story_from_text(image_caption=image_caption,
+    #                                                  extracted_text=extracted_text,
+    #                                                  llm_option=llm_option)
+
+    # Replace above two steps with OpenAI story generation
+    story_for_audio = await generate_story_from_image_and_text_openai(image_path, extracted_text)
 
     # Step 5: Convert description to audio
     audio_file_path = await generate_audio_from_text(uuid, index, tts_option, story_for_audio)
