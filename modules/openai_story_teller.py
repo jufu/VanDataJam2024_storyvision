@@ -87,9 +87,10 @@ def generate_openai_caption(self, image_path, extracted_text):
                     "content": [
                         {
                         "type": "text",
-                        "text": """You are a children's storybook author. You are given part of the story text and the picture from that page.
-        Write a descriptive caption for the picture, so a small child who cannot see the image can understand what is happening.
-        """,
+                        "text": """You are a parent reading a story book to your child who has impaired vision. You are given the text of the story and the picture from that page.
+                                    Use the story text to help understand what is happening in the picture and write a descriptive caption for the picture.
+                                    Use fun and expressive language so a small child who cannot see the image can understand what is happening. Keep the caption to 2-3 sentences.
+                                """,
                         },
                         {
                         "type": "text",
