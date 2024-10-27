@@ -163,7 +163,7 @@ The `.env` file is included in `.gitignore` to ensure it is not accidentally com
 
 The app includes two main components: the FastAPI backend and the Streamlit frontend. Make sure Ollama’s API server is running if you plan to use Llama 2.
 
-### Step 1: Start the FastAPI Server
+### Start the FastAPI Server
 
 In one terminal window, start the FastAPI server:
 
@@ -171,19 +171,10 @@ In one terminal window, start the FastAPI server:
 uvicorn api.main:app --reload
 ```
 
-- This starts the FastAPI backend at `http://127.0.0.1:8000`.
+- This starts the FastAPI frontend at `http://127.0.0.1:8000`.
 - You can test the API endpoints via the documentation at `http://127.0.0.1:8000/docs`.
 
-### Step 2: Start the Streamlit Frontend
-
-In a separate terminal window, start the Streamlit app:
-
-```bash
-streamlit run app.py
-```
-
-- This starts the Streamlit frontend at `http://localhost:8501`.
-- Use this interface to upload images, generate descriptions, and play the resulting audio.
+### App Screenshots
 
 ---
 
