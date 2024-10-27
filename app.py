@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from io import BytesIO
+from streamlit_carousel import carousel
 
 # FastAPI backend URL
 FASTAPI_URL = "http://127.0.0.1:8000/process-image"
@@ -35,10 +36,26 @@ if uploaded_file is not None:
             response.raise_for_status()  # Raises error if response status code is not 200
 
             # Load the audio content
-            audio_data = BytesIO(response.content)
+            # audio_data = BytesIO(response.content)
             # Play the audio in Streamlit
-            st.audio(audio_data, format="audio/mp3")
-            st.success("Audio description generated successfully!")
+            # st.audio(audio_data, format="audio/mp3")
+            # st.success("Audio description generated successfully!")
+            data = response.json()
+            images = data['image_files']
+            text_files = data['text_files']
+            audio_files = data['audio_files']
+            st.write("Story Book Pages")
+            items = []
+
+            for i in range(len(images)):
+                items.append({
+                    "img": images[i],
+                    "title": f"Page {i+1}",
+                    "text": text_files[i],
+                    # "link": audio_files[i],
+                    # "interval": 5000
+                })
+            carousel(items)
 
         except requests.exceptions.HTTPError as http_err:
             if response.status_code == 503:

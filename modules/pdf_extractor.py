@@ -46,19 +46,21 @@ class PDFExtractor:
             list: List of page numbers to extract images from.
         """
         text_paths = []
+        texts = []
         pages = []
         for i, page in enumerate(doc):
             text = page.get_text()
             clean_text = re.sub(r'\s+', ' ', text)
             if re.search(r'\d+/\d+$', text):
                 text_path = os.path.join(self.text_output_folder, f"{
-                                        self.unique_id}_page_{i}.txt")
+                    self.unique_id}_page_{i}.txt")
                 with open(text_path, 'wb') as out:
                     out.write(clean_text.encode('utf-8'))
                 text_paths.append(text_path)
+                texts.append(clean_text)
                 pages.append(i)
 
-        return text_paths, pages
+        return text_paths, pages, texts
 
     def _extract_images(self, doc, pages):
         """
@@ -81,7 +83,7 @@ class PDFExtractor:
                     image_bytes = base_image["image"]
                     image = Image.open(io.BytesIO(image_bytes))
                     image_path = os.path.join(self.image_output_folder, f"{self.unique_id}_page_{
-                                            page.number}_image_{img_index}.png")
+                        page.number}_image..png")
                     image.save(image_path)
                     images_paths.append(image_path)
         return images_paths
@@ -96,7 +98,7 @@ class PDFExtractor:
         doc = pymupdf.open(self.pdf_path)
 
         # Extract text and images
-        text_paths, pages = self._extract_text(doc)
+        text_paths, pages, texts = self._extract_text(doc)
         images_paths = self._extract_images(doc, pages)
 
         doc.close()
@@ -105,5 +107,6 @@ class PDFExtractor:
         return {
             "unique_id": self.unique_id,
             "text_files": text_paths,
+            "texts": texts,
             "image_files": images_paths
         }
