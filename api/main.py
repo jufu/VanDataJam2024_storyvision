@@ -33,6 +33,19 @@ app.mount("/static", StaticFiles(directory="public/static"), name="static")
 app.mount("/temp", StaticFiles(directory="temp"), name="temp")
 templates = Jinja2Templates(directory="public")
 
+# initialize folders
+output_folder = "./temp"
+books_folder = f"{output_folder}/books"
+text_folder = f"{output_folder}/text"
+images_folder = f"{output_folder}/images"
+audio_folder = f"{output_folder}/audio"
+
+# Create each folder directly
+os.makedirs(books_folder, exist_ok=True)
+os.makedirs(images_folder, exist_ok=True)
+os.makedirs(audio_folder, exist_ok=True)
+os.makedirs(text_folder, exist_ok=True)
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -40,6 +53,60 @@ async def read_root(request: Request):
     Endpoint to render the homepage.
     """
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+async def generate_image_caption(image_path):
+    """
+    Function to generate a caption for an image.
+
+    Args:
+        image_path (str): Path to the image file.
+
+    Returns:
+        str: Generated caption for the image.
+    """
+    print(f"Generating caption for image: {image_path}")
+    try:
+        image_caption = image_captioner.generate_caption(image_path)
+    except Exception as e:
+        print(f"Error during image captioning: {e}")
+        image_caption = "a scene from a storybook"
+    return image_caption
+
+
+async def generate_story_from_text(image_caption, extracted_text, llm_option):
+    """
+    Function to generate a story from text.
+
+    Args:
+        text (str): Text to generate a story from.
+
+    Returns:
+        str: Generated story.
+    """
+    print(f"Generating story from text")
+    try:
+        story_teller = StoryTeller(llm_option)
+        story_for_audio = story_teller.generate_story(
+            text_from_visuals=image_caption, extracted_text=extracted_text)
+    except Exception as e:
+        print(f"Error during description enhancement: {e}")
+        story_for_audio = "An engaging description could not be generated due to a processing error."
+    return story_for_audio
+
+
+async def generate_audio_from_text(uuid, index, tts_option, story_for_audio):
+    print(f"Generating audio for story, uuid: {uuid}, index: {index}")
+    try:
+        audio_file_name = f"{uuid}_page_{index}_audio_{index}.mp3"
+        audio_file_path = f"{audio_folder}/{audio_file_name}"
+        text_to_speech.generate_audio(
+            story_for_audio, audio_file_path, tts_option)
+    except Exception as e:
+        print(f"Error during text-to-speech generation: {e}")
+        raise HTTPException(
+            status_code=500, detail="Failed to generate audio.")
+    return audio_file_path
 
 
 @app.post("/process-image")
@@ -59,29 +126,11 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
             status_code=503, detail="Required modules are not available.")
 
     # Save the uploaded file
-    output_folder = "./temp"
-    books_folder = f"{output_folder}/books"
     pdf_path = f"{books_folder}/{file.filename}"
-    text_folder = f"{output_folder}/text"
-    images_folder = f"{output_folder}/images"
-    audio_folder = f"{output_folder}/audio"
-
-    # Create each folder directly
-    os.makedirs(books_folder, exist_ok=True)
-    os.makedirs(images_folder, exist_ok=True)
-    os.makedirs(audio_folder, exist_ok=True)
-    os.makedirs(text_folder, exist_ok=True)
     os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
 
     with open(pdf_path, "wb") as pdf_file:
         pdf_file.write(await file.read())
-
-    # # Step 1: Extract text from image (OCR)
-    # try:
-    #     extracted_text = ocr_processor.extract_text(image_path)
-    # except Exception as e:
-    #     print(f"Error during OCR: {e}")
-    #     extracted_text = ""
 
     # Step 1: Preprocess PDF
     try:
@@ -99,36 +148,26 @@ async def process_image(file: UploadFile = File(...), tts_option: str = Form("Go
     extracted_text = text_files[0]
 
     # Step 2: Generate image caption
-    try:
-        image_caption = image_captioner.generate_caption(image_path)
-    except Exception as e:
-        print(f"Error during image captioning: {e}")
-        image_caption = "a scene from a storybook"
+    image_caption = await generate_image_caption(image_path)
 
     # Step 3: Generate Story
-    try:
-        story_teller = StoryTeller(llm_option)
-        story_for_audio = story_teller.generate_story(
-            text_from_visuals=image_caption, extracted_text=extracted_text)
-    except Exception as e:
-        print(f"Error during description enhancement: {e}")
-        story_for_audio = "An engaging description could not be generated due to a processing error."
+    story_for_audio = await generate_story_from_text(image_caption=image_caption,
+                                                     extracted_text=extracted_text,
+                                                     llm_option=llm_option)
 
     # Step 4: Convert description to audio
-    try:
-        audio_file_name = f"{uuid}_page_0_audio_0.mp3"
-        audio_file_path = f"{audio_folder}/{audio_file_name}"
-        text_to_speech.generate_audio(
-            story_for_audio, audio_file_path, tts_option)
-    except Exception as e:
-        print(f"Error during text-to-speech generation: {e}")
-        raise HTTPException(
-            status_code=500, detail="Failed to generate audio.")
+    audio_file_path = await generate_audio_from_text(uuid, 0, tts_option, story_for_audio)
 
     # Return the generated audio file
     extracted_data["audio_files"] = [audio_file_path]
+    print(f"Returning extracted data: {extracted_data}")
     # return FileResponse(audio_file_path, media_type="audio/mpeg", filename=audio_file_name)
     return JSONResponse(content=extracted_data)
+
+
+@app.post("/generate_audio")
+async def generate_audio(uuid: str, index: int, tts_option: str = Form("Google TTS"), llm_option: str = Form("llama2")):
+    return JSONResponse(content={"message": "Not implemented yet.", "uuid": uuid, "index": index, "tts_option": tts_option, "llm_option": llm_option})
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

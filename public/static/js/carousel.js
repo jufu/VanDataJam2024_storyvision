@@ -1,8 +1,9 @@
 // static/js/carousel.js
-
+const requestNextAudio = async ({ unique_id }) => { }
 // Function to initialize the Bootstrap carousel
-function initializeCarousel(images, texts) {
+const initializeCarousel = async ({ image_files, texts = [], audio_files = [], unique_id }) => {
     const carouselContainer = document.getElementById("carouselContainer");
+    const audioPlayer = document.getElementById("audioPlayer"); // Assumes an audio player element is in HTML
 
     // Clear any existing content
     carouselContainer.innerHTML = '';
@@ -13,12 +14,12 @@ function initializeCarousel(images, texts) {
             <div class="carousel-inner">`;
 
     // Add each image as a carousel item
-    images.forEach((image, index) => {
+    image_files.forEach((image, index) => {
         carouselHTML += `
             <div class="carousel-item ${index === 0 ? 'active' : ''}">
                 <img src="${image}" class="d-block w-100" alt="Page ${index + 1}">
                 <div class="carousel-caption" style="background:black;opacity:0.7;">
-                <p>${texts[index]}</p>
+                <p>${texts[index] || ""}</p>
                 </div>
             </div>
         `;
@@ -49,6 +50,15 @@ function initializeCarousel(images, texts) {
         pause: 'hover',    // Pauses carousel on hover
         keyboard: true
     });
+
+    let nextAudio = await requestNextAudio({ unique_id })
+
+
+    // Set the first audio file to autoplay on load
+    if (audio_files.length > 0) {
+        audioPlayer.src = audio_files[0];
+        audioPlayer.play();
+    }
 
     // Add an event listener to detect slide changes
     carouselElement.addEventListener('slide.bs.carousel', function (event) {

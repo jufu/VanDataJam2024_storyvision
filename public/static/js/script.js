@@ -15,7 +15,7 @@ document
             //     messageElement.innerHTML = `<div class="alert alert-success" role="alert">
             //       File uploaded successfully: ${result.file}
             //   </div>`;
-            initializeCarousel(result.image_files, result.texts);
+            initializeCarousel(result);
         } else {
             messageElement.innerHTML = `<div class="alert alert-danger" role="alert">
               Error: ${result.detail || "Unknown error"}
