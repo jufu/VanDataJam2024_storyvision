@@ -47,7 +47,7 @@ The project consists of the following key components:
 
 - **Python 3.12.2**
 - **Git**
-- **[Ollama](https://ollama.com/)** (for running Llama 2, if available)
+- **[Ollama](https://ollama.com/)** (for running Llama 3, if available)
 - **Tesseract OCR** (for text extraction from images)
 
 ### 2. Clone the Repository

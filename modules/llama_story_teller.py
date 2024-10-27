@@ -90,7 +90,7 @@ class LlamaStoryTeller:
 
         # Set up the request payload
         payload = {
-            "model": "llama3", # default: llama3-8.0B, use llama3-70b for faster performance
+            "model": "llama3", # default: llama3-8.0B, use llama3-70B for faster performance
             "prompt": prompt,
             "max_new_tokens": max_new_tokens,
             "temperature": temperature,
