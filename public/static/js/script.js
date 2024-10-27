@@ -3,6 +3,12 @@ document
     .addEventListener("submit", async function (event) {
         event.preventDefault(); // Prevent the default form submission
 
+        // get home_animation element from dom
+        home_animation = document.getElementById("home_animation");
+
+        // hide home animation
+        home_animation.style.display = "none";
+
         // get loading_indicator element from dom
         loading_indicator = document.getElementById("loading_indicator");
 
