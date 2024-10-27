@@ -1,7 +1,7 @@
 // static/js/carousel.js
 
 // Function to initialize the Bootstrap carousel
-function initializeCarousel(images) {
+function initializeCarousel(images, texts) {
     const carouselContainer = document.getElementById("carouselContainer");
 
     // Clear any existing content
@@ -18,7 +18,7 @@ function initializeCarousel(images) {
             <div class="carousel-item ${index === 0 ? 'active' : ''}">
                 <img src="${image}" class="d-block w-100" alt="Page ${index + 1}">
                 <div class="carousel-caption" style="background:black;opacity:0.7;">
-                <p>This is a carousel caption</p>
+                <p>${texts[index]}</p>
                 </div>
             </div>
         `;
